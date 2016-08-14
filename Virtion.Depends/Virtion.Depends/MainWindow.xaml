@@ -1,0 +1,131 @@
+﻿<controls:MetroWindow 
+        x:Class="Virtion.Depends.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        WindowStartupLocation="CenterScreen"
+        Title="Virtion.Depends - " 
+        Height="400" Width="600"
+        Background="#eeeef2"
+        GlowBrush="Black"    
+        WindowTitleBrush="#eeeef2"
+        TitleForeground="#454545"
+        WindowMaxButtonStyle="{DynamicResource CommondButtonStyle}"      
+        WindowMinButtonStyle="{DynamicResource CommondButtonStyle}"
+        WindowCloseButtonStyle="{DynamicResource CommondButtonStyle}"
+        AllowDrop="True"
+        PreviewDragEnter="Window_PreviewDragEnter"
+        PreviewDragOver="Window_PreviewDragEnter"
+        PreviewDrop="Window_PreviewDrop"
+    >
+    <controls:MetroWindow.Resources>
+        <Style x:Key="CommondButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="46"  />
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <Border x:Name="Background" Background="{TemplateBinding Background}" CornerRadius="{Binding (controls:ControlsHelper.CornerRadius), Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"/>
+                            <Border x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{x:Null}" CornerRadius="{Binding (controls:ControlsHelper.CornerRadius), Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            <Border x:Name="DisabledVisualElement" Background="{DynamicResource ControlsDisabledBrush}" CornerRadius="{Binding (controls:ControlsHelper.CornerRadius), Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" IsHitTestVisible="False" Opacity="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            <controls:ContentControlEx x:Name="PART_ContentPresenter" ContentCharacterCasing="{Binding (controls:ControlsHelper.ContentCharacterCasing), RelativeSource={RelativeSource TemplatedParent}}" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" Padding="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" TargetName="Background" Value="{DynamicResource GrayBrush8}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" TargetName="Background" Value="{DynamicResource GrayBrush7}"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter Property="BorderThickness" TargetName="Border" Value="2"/>
+                                <Setter Property="BorderBrush" TargetName="Border" Value="{DynamicResource ButtonMouseOverBorderBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" TargetName="DisabledVisualElement" Value="0.7"/>
+                                <Setter Property="Opacity" TargetName="PART_ContentPresenter" Value="0.3"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </controls:MetroWindow.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition />
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+
+        <Border BorderBrush="#007acc" 
+            BorderThickness="0,0,0,1.5">
+            <Grid>
+                <ToolBar >
+                    <Button x:Name="B_Open"
+                        Click="B_Open_OnClick"
+                        Content="Open"
+                       />
+                </ToolBar>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <Border 
+                BorderBrush="#CCCCCC"
+                BorderThickness="2,1">
+                <Grid Grid.Column="0"
+                         Background="#eeeef2"
+                         >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="20" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Border
+                        Grid.Row="0"
+                        Background="#007acc">
+                        <TextBlock                     
+                        Text="Symbol" 
+                        Margin="10,0"
+                        VerticalAlignment="Center"
+                        Foreground="White"
+                        />
+                    </Border>
+                    <TreeView x:Name="TV_Tree"
+                          Grid.Row="1"    
+                          Background="#eeeef2"  
+                     />
+                </Grid>
+            </Border>
+            <GridSplitter Width="2"
+                  Background="#CCCCCC"        
+                  />
+
+            <ListBox x:Name="LB_List"
+                Grid.Column="1"
+                Background="White" 
+                Margin="10"     
+                />
+        </Grid>
+
+        <Border x:Name="B_InfoPlane"
+            Grid.Row="2"
+            Background="#007acc">
+            <TextBlock  x:Name="TB_Tip"
+                Margin="5,0"
+                VerticalAlignment="Center"        
+                Foreground="White"
+                Text=""        
+            />
+        </Border>
+
+    </Grid>
+</controls:MetroWindow >
