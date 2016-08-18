@@ -5,9 +5,8 @@
 #include <thread>
 #include "Detours/detours.h"
 
-typedef void(_stdcall * BywayCallbackDelegate)(LPSTR);
-typedef void(_stdcall * SymbolCallbackDelegate)(LPSTR);
-typedef void(_stdcall * ExportCallBackDelegate)(LPSTR);
+
+typedef void(_stdcall* SymbolCallbackDelegate)(LPCSTR);
 
 class PEParser
 {

@@ -28,13 +28,14 @@ namespace Virtion.Depends
         private const string DllPath = "x86\\PEDetours.dll";
 #endif
 
+        [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Ansi, SetLastError = true)]
         public delegate void SymbolCallbackDelegate([MarshalAs(UnmanagedType.LPStr)] StringBuilder name);
 
         [DllImport(DllPath, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
         public static extern void GetImports(SymbolCallbackDelegate bywayCallBack, SymbolCallbackDelegate symbolCallBack);
 
         [DllImport(DllPath, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void GetExports(SymbolCallbackDelegate bywayCallBack);
+        public static extern void GetExports(SymbolCallbackDelegate symbolCallBack);
 
         [DllImport(DllPath, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.Cdecl)]
         public static extern bool OpenEPFile([MarshalAs(UnmanagedType.LPStr)] string path);
@@ -43,6 +44,8 @@ namespace Virtion.Depends
         private TreeViewItem importsItem;
         private TreeViewItem currentImportItem;
         private string currentPEName;
+
+        private static SymbolCallbackDelegate exportsCallbackDelegate;
 
         public MainWindow()
         {
@@ -91,7 +94,9 @@ namespace Virtion.Depends
             if (OpenEPFile(name) == true)
             {
                 GetImports(BywayCallback, SymbolCallback);
-                GetExports(ExportsCallback);
+
+                exportsCallbackDelegate = new SymbolCallbackDelegate(ExportsCallback);
+                GetExports(exportsCallbackDelegate);
 
 #if _X64
                 this.TB_Tip.Text = currentPEName + " is a x64 PE file";
@@ -129,13 +134,9 @@ namespace Virtion.Depends
         private void ExportsCallback(StringBuilder name)
         {
             this.exportsItem.IsExpanded = true;
-
-            {
-                var item = this.exportsItem.Items[0] as TreeViewItem;
-                var list = item.DataContext as List<string>;
-                list.Add(name.ToString());
-            }
-
+            var item = this.exportsItem.Items[0] as TreeViewItem;
+            var list = item.DataContext as List<string>;
+            list.Add(name.ToString());
         }
 
         private void SymbolCallback(StringBuilder name)

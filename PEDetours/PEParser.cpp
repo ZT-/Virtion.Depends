@@ -4,12 +4,14 @@
 
 #include "PEParser.h"
 
+#include <vector>
 #include  <string>
 using namespace std;
 
 extern  SymbolCallbackDelegate SymbolCallback;
-extern  BywayCallbackDelegate BywayCallback;
-extern ExportCallBackDelegate ExportCallBack;
+extern  SymbolCallbackDelegate BywayCallback;
+
+std::vector<std::string> exportList;
 
 PEParser::PEParser()
 {
@@ -22,9 +24,9 @@ PEParser::~PEParser()
 
 bool PEParser::Open(std::string path)
 {
-	this->pePath= path.c_str();
+	this->pePath = path.c_str();
 
- 	LPCSTR szOrg=  this->pePath.c_str();
+	LPCSTR szOrg = this->pePath.c_str();
 
 	hOld = CreateFileA(szOrg,
 		GENERIC_READ,
@@ -136,37 +138,21 @@ static BOOL CALLBACK AddBywayCallback(PVOID pContext,
 }
 
 
-bool PEParser::AddFile()
-{
-	BOOL bAddedDll = FALSE;
-
-	DetourBinaryResetImports(pBinary);
-
-	if (!DetourBinaryEditImports(pBinary,
-		&bAddedDll,
-		AddBywayCallback, NULL, NULL, NULL)) {
-		printf("DetourBinaryEditImports failed: %d\n", GetLastError());
-	}
-
-	return false;
-}
-
-static BOOL CALLBACK ExportCallback(PVOID pContext,
+static BOOL CALLBACK EnumerateExportCallback(PVOID pContext,
 	ULONG nOrdinal,
 	PCHAR pszSymbol,
 	PVOID pbTarget)
 {
-	(void)pContext;
+	//char arr[260] = {};
+	//sprintf_s(arr, "%7d  %p %-30s\n", (ULONG)nOrdinal, pbTarget, pszSymbol ? pszSymbol : "[NONAME]");
+	//OutputDebugStringA(arr);
 
-	if (ExportCallBack != nullptr)
-	{
-		ExportCallBack(pszSymbol ? pszSymbol : "[NONAME]");
-	}
+	//if (ExportsCallBack != nullptr)
+	//{
+	//ExportsCallBack("[NONAME]");
+	//}
 
-	printf("    %7d      %p %-30s\n",
-		(ULONG)nOrdinal,
-		pbTarget,
-		pszSymbol ? pszSymbol : "[NONAME]");
+	exportList.push_back(pszSymbol ? pszSymbol : "[NONAME]");
 	return TRUE;
 }
 
@@ -182,7 +168,7 @@ bool PEParser::PrintExport()
 	printf("  EntryPoint: %p\n", pbEntry);
 
 	printf("    Ordinal      RVA     Name\n");
-	DetourEnumerateExports(hInst, NULL, ExportCallback);
+	DetourEnumerateExports(hInst, NULL, EnumerateExportCallback);
 	return true;
 }
 
@@ -212,3 +198,19 @@ bool PEParser::Write(std::string path)
 	return  true;
 }
 
+
+
+bool PEParser::AddFile()
+{
+	BOOL bAddedDll = FALSE;
+
+	DetourBinaryResetImports(pBinary);
+
+	if (!DetourBinaryEditImports(pBinary,
+		&bAddedDll,
+		AddBywayCallback, NULL, NULL, NULL)) {
+		printf("DetourBinaryEditImports failed: %d\n", GetLastError());
+	}
+
+	return false;
+}
