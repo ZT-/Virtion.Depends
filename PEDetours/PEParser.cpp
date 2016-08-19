@@ -169,6 +169,10 @@ bool PEParser::PrintExport()
 
 	printf("    Ordinal      RVA     Name\n");
 	DetourEnumerateExports(hInst, NULL, EnumerateExportCallback);
+
+
+	FreeLibrary(hInst);
+
 	return true;
 }
 

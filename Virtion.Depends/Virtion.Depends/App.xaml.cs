@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 
 namespace Virtion.Depends
 {
@@ -28,7 +23,7 @@ namespace Virtion.Depends
                 }
                 else
                 {
-                    return System.Environment.CurrentDirectory;
+                    return System.AppDomain.CurrentDomain.BaseDirectory;
                 }
             }
         }
